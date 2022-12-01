@@ -1,0 +1,65 @@
+server:
+  # port: 9002
+  servlet:
+    context-path: /api/v1/contributor
+
+
+
+  #for liquibase
+spring:
+  liquibase:
+    enabled: true
+    drop-first: false
+    change-log: classpath:db/changelog/master.xml
+  #for database
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/microservice_pms1
+    username: postgres
+    password: Jost@soft321
+  application:
+    name: project-contributor
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+eureka:
+  instance:
+    hostname: localhost
+
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 10
+      waitDurationInOpenState: 5000
+      failureRateThreshold: 60
+      eventConsumerBufferSize: 10
+      registerHealthIndicator: true
+    someShared:
+      slidingWindowSize: 50
+      permittedNumberOfCallsInHalfOpenState: 10
+  instances:
+    employeeService:
+      baseConfig: default
+      waitDurationInOpenState: 5000
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+
+
